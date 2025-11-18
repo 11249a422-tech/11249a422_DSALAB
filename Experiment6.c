@@ -1,0 +1,81 @@
+PROGRAM 6: INFIX TO POSTFIX CONVERSION (STACK)
+  
+AIM :
+To convert an infix expression to postfix expression using a stack.
+
+ALGORITHM  :
+Scan infix expression from left to right
+If operand → add to postfix
+If '(' → push to stack
+If ')' → pop until '(' is found
+If operator →
+pop stack operators with higher or equal precedence
+push current operator
+Pop remaining operators from stack
+Print postfix expression
+
+ PROGRAM :
+#include <stdio.h>
+#include <ctype.h>
+char stack[50];
+int top = -1;
+void push(char ch) {
+    stack[++top] = ch;
+}
+
+char pop() {
+    return stack[top--];
+}
+
+int precedence(char ch) {
+    if(ch == '^') return 3;
+    if(ch == '*' || ch == '/') return 2;
+    if(ch == '+' || ch == '-') return 1;
+    return 0;
+}
+
+int main() {
+    char infix[50], postfix[50];
+    int i, j = 0;
+    char ch, temp;
+
+    printf("Enter infix expression: ");
+    scanf("%s", infix);
+
+    for(i = 0; infix[i] != '\0'; i++) {
+        ch = infix[i];
+
+        if(isalnum(ch)) {
+            postfix[j++] = ch;
+        }
+        else if(ch == '(') {
+            push(ch);
+        }
+        else if(ch == ')') {
+            while(top != -1 && stack[top] != '(')
+                postfix[j++] = pop();
+            pop();  
+        }
+        else {
+            while(top != -1 && precedence(stack[top]) >= precedence(ch))
+                postfix[j++] = pop();
+            push(ch);
+        }
+    }
+
+    while(top != -1)
+        postfix[j++] = pop();
+
+    postfix[j] = '\0';
+
+    printf("Postfix Expression: %s\n", postfix);
+
+    return 0;
+}
+
+SAMPLE OUTPUT :
+Enter infix expression: A+B*C
+Postfix Expression: ABC*+
+
+RESULT :
+Infix expression was successfully converted to postfix using a stack.
